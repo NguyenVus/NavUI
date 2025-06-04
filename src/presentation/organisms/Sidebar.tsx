@@ -33,7 +33,7 @@ export const Sidebar = ({ isOpen, onClose, isDesktop }: SidebarProps) => {
                 )}
             </div>
 
-            {/* Nội dung nav */}
+
             <nav className="flex flex-col gap-4 p-4">
                 <NavItem label="Trang chủ" href="/" />
                 <NavItem label="Sản phẩm" href="/products" />

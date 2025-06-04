@@ -7,7 +7,7 @@ import { IconButton } from "../atoms/IconButton";
 export const DarkModeToggle = () => {
     const [isDark, setIsDark] = useState(false);
 
-    // Khởi tạo trạng thái từ localStorage hoặc class trên body
+
     useEffect(() => {
         const saved = localStorage.getItem("dark-mode");
         const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;

@@ -1,4 +1,4 @@
-// src/presentation/pages/DashboardPage.tsx
+
 export const DashboardPage = () => {
     return (
         <div>

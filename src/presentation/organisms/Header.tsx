@@ -25,7 +25,7 @@ export const Header = ({ isOpen, onToggleSidebar, isDesktop }: HeaderProps) => {
                     : { left: 0, width: "100%" }
             }
         >
-            {/* Nút toggle sidebar bên trái */}
+
             <IconButton
                 icon={isOpen ? <X size={24} /> : <Menu size={24} />}
                 ariaLabel={isOpen ? "Close sidebar" : "Open sidebar"}
@@ -41,7 +41,6 @@ export const Header = ({ isOpen, onToggleSidebar, isDesktop }: HeaderProps) => {
                     <NavItem label="Cài đặt" href="/settings" />
                     </nav>
             </div>
-            {/* Dark mode toggle ở cuối bên phải */}
             <DarkModeToggle />
         </header>
     );
