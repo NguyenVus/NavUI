@@ -1,0 +1,19 @@
+{
+  "LoginPage" : {
+    "login": "Login",
+    "email": "Email",
+    "password": "Password",
+    "forgot_password": "Forgot Password?",
+    "dont_have_account": "Don't have an account?",
+    "login_with_microsoft": "Login with Microsoft"
+  },
+  "RegisterPage" : {
+    "singup" : "Create Account",
+    "email": "Email",
+    "password": "Password",
+    "retype_password" : "Retype Password",
+    "have_account" : "Alrealy have account? ",
+    "login": "SignIn",
+    "signup_with_microsoft" : "SingUp with Microsoft"
+  }
+}

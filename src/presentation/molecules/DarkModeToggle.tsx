@@ -2,42 +2,29 @@
 
 import React, { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
+import { useTheme } from "next-themes";
 import { IconButton } from "../atoms/IconButton";
 
 export const DarkModeToggle = () => {
-    const [isDark, setIsDark] = useState(false);
-
+    const { theme, setTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        const saved = localStorage.getItem("dark-mode");
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-        if (saved === "true" || (!saved && prefersDark)) {
-            document.body.classList.add("dark-mode");
-            setIsDark(true);
-        } else {
-            document.body.classList.remove("dark-mode");
-            setIsDark(false);
-        }
+        setMounted(true);
     }, []);
 
-    const toggleDarkMode = () => {
-        if (isDark) {
-            document.body.classList.remove("dark-mode");
-            localStorage.setItem("dark-mode", "false");
-            setIsDark(false);
-        } else {
-            document.body.classList.add("dark-mode");
-            localStorage.setItem("dark-mode", "true");
-            setIsDark(true);
-        }
+    // Ngăn render cho tới khi mounted để tránh mismatch
+    if (!mounted) return null;
+
+    const toggleTheme = () => {
+        setTheme(theme === "dark" ? "light" : "dark");
     };
 
     return (
         <IconButton
-            onClick={toggleDarkMode}
-            ariaLabel={isDark ? "Switch to light mode" : "Switch to dark mode"}
-            icon={isDark ? <Moon size={20} /> : <Sun size={20} />}
+            onClick={toggleTheme}
+            ariaLabel="Toggle theme"
+            icon={theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
         />
     );
 };

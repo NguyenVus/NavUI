@@ -8,7 +8,7 @@ type NavItemProps = {
 };
 
 export const NavItem = ({ label, href }: NavItemProps) => (
-    <Link href={href}  className="nav-item block py-2 px-4 rounded hover:bg-gray-200">
+    <Link href={href}  className=" block py-2 px-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
         {label}
     </Link>
 );

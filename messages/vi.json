@@ -1,0 +1,19 @@
+{
+  "LoginPage" : {
+    "login": "Đăng nhập",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "forgot_password": "Quên mật khẩu?",
+    "dont_have_account": "Chưa có tài khoản?",
+    "login_with_microsoft": "Đăng nhập với Microsoft"
+  },
+  "RegisterPage" : {
+    "singup" : "Đăng ký",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "retype_password" : "Nhập lại mật khẩu",
+    "have_account" : "Đã có tài khoản?",
+    "login": "Đăng nhập",
+    "signup_with_microsoft" : "Đăng nhập với Microsoft"
+  }
+}

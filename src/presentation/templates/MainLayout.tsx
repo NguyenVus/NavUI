@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { Header } from "../organisms/Header";
 import { Sidebar } from "../organisms/Sidebar";
+import { ChatInput } from "../atoms/ChatInput";
+import Footer from "@/presentation/organisms/Footer/Footer";
 
 type Props = { children: React.ReactNode };
 
@@ -25,23 +27,51 @@ export const MainLayout = ({ children }: Props) => {
         return () => window.removeEventListener("resize", onResize);
     }, []);
 
+    const sidebarWidth = 256;
+
     return (
-        <div>
+        <div className="h-screen flex flex-col">
             <Header isOpen={isOpen} onToggleSidebar={() => setIsOpen(prev => !prev)} isDesktop={isDesktop} />
 
-
-            <div className="flex min-h-screen pt-14">
+            <div className="flex min-h-screen  pt-14">
                 <Sidebar isOpen={isOpen} onClose={() => setIsOpen(false)} isDesktop={isDesktop} />
 
-                <main
-                    className={`flex-1 p-6 transition-all duration-300`}
+
+                <div
+                    className="flex-1 flex flex-col"
                     style={{
-                        marginLeft: isDesktop && isOpen ? 256 : 0,
+                        marginLeft: isDesktop && isOpen ? sidebarWidth : 0,
                     }}
                 >
-                    {children}
-                </main>
+
+                    <main className="flex-1 overflow-y-auto p-6 pb-48">
+                        {children}
+                    </main>
+
+                </div>
             </div>
+            <div
+                className="fixed z-40 flex flex-col items-center justify-center w-full px-4"
+                style={
+                    isDesktop && isOpen
+                        ? { left: sidebarWidth, width: `calc(100% - ${sidebarWidth}px)`, bottom: 0 }
+                        : { left: 0, width: "100%", bottom: 0 }
+                }
+            >
+
+                <div className=" w-full max-w-3xl bg-white dark:bg-black  rounded-t-4xl">
+                    <ChatInput />
+                </div>
+                <div className=" w-full bg-white dark:bg-black pb-2 pt-2">
+                    <Footer />
+
+                </div>
+
+            </div>
+
+
+
+
         </div>
     );
 };
