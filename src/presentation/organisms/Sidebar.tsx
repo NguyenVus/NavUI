@@ -61,15 +61,15 @@ export const Sidebar = ({ isOpen,onClose, isDesktop }: SidebarProps) => {
                     <NavItem label="More 7" href="/more7" />
                 </nav>
             </div>
-            <div className="h-14 flex items-center justify-between px-2 shrink-0">
-                <div className="flex-1 items-center">
-                    <Image src="/globe.svg" alt="Logo" width={100} height={100} className="p-5" />
+            <div className="h-14 flex items-center justify-between px-4 shrink-0">
+                <div className="flex-1 items-center px-3">
+                    <Image src="/globe.svg" alt="Logo" width={100} height={100}  />
                 </div>
                 <div className="min-w-0">
-                    <div className="flex min-w-0 grow items-center gap-2">
+                    <div className="flex min-w-0 grow items-center text-sm gap-2">
                         <div className="truncate">Upgrade plan</div>
                     </div>
-                    <div className="not-group-data-disabled:text-token-text-tertiary leading-dense my-0.5 text-xs">More
+                    <div className="not-group-data-disabled:text-token-text-tertiary text-gray-500 leading-dense my-0.5 text-xs">More
                         access to the best models
                     </div>
                 </div>

@@ -5,13 +5,13 @@ import { Header } from "../organisms/Header";
 import { Sidebar } from "../organisms/Sidebar";
 import { ChatInput } from "../atoms/ChatInput";
 import Footer from "@/presentation/organisms/Footer/Footer";
+import { DashboardPage } from "../pages/DashboardPage";
 
-type Props = { children: React.ReactNode };
 
-export const MainLayout = ({ children }: Props) => {
+export const MainLayout = () => {
     const [isOpen, setIsOpen] = useState(true);
     const [isDesktop, setIsDesktop] = useState(true);
-
+    const [messages, setMessages] = useState<string[]>([]);
     useEffect(() => {
         const onResize = () => {
             if (window.innerWidth < 768) {
@@ -27,6 +27,10 @@ export const MainLayout = ({ children }: Props) => {
         return () => window.removeEventListener("resize", onResize);
     }, []);
 
+    const handleSendMessage = (msg: string) => {
+        console.log("handleSendMessage called with:", msg);
+        setMessages((prev) => [...prev, msg]);
+    };
     const sidebarWidth = 256;
 
     return (
@@ -45,7 +49,7 @@ export const MainLayout = ({ children }: Props) => {
                 >
 
                     <main className="flex-1 overflow-y-auto p-6 pb-48">
-                        {children}
+                        <DashboardPage messages={messages} />
                     </main>
 
                 </div>
@@ -60,7 +64,7 @@ export const MainLayout = ({ children }: Props) => {
             >
 
                 <div className=" w-full max-w-3xl bg-white dark:bg-black  rounded-t-4xl">
-                    <ChatInput />
+                    <ChatInput onSendMessage={handleSendMessage} />
                 </div>
                 <div className=" w-full bg-white dark:bg-black pb-2 pt-2">
                     <Footer />

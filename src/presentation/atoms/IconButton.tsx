@@ -13,6 +13,7 @@ export const IconButton = ({ icon, ariaLabel, ...props }: IconButtonProps) => (
           hover:bg-gray-200
           active:bg-gray-300
           focus:outline-none
+          cursor-pointer
           dark:hover:bg-gray-700
           ${props.className ?? ""}
         `}

@@ -2,6 +2,7 @@ import { IconButton } from "../atoms/IconButton";
 import { Menu, X, UserCircle } from "lucide-react";
 import { DarkModeToggle } from "@/presentation/molecules/DarkModeToggle";
 // import {NavItem} from "@/presentation/atoms/NavItem"; // đường dẫn tùy theo bạn lưu
+import { UserDropdown }  from "../molecules/UserDropDown"
 
 type HeaderProps = {
     isOpen: boolean;
@@ -44,11 +45,13 @@ export const Header = ({ isOpen, onToggleSidebar, isDesktop }: HeaderProps) => {
             {/*        </nav>*/}
             {/*</div>*/}
 
-            <IconButton
-                icon={<UserCircle size={24} />}
-                ariaLabel="Tài khoản"
-                onClick={() => alert("Mở thông tin người dùng")}
-            />
+            {/*<IconButton*/}
+            {/*    icon={<UserCircle size={24} />}*/}
+            {/*    ariaLabel="Tài khoản"*/}
+            {/*    onClick={() => alert("Mở thông tin người dùng")}*/}
+            {/*/>*/}
+
+            <UserDropdown/>
             <DarkModeToggle />
         </header>
     );

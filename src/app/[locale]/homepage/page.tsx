@@ -1,11 +1,6 @@
-// src/app/page.tsx
+// app/page.tsx (hoặc app/dashboard/page.tsx nếu có routing riêng)
 import { MainLayout } from "@/presentation/templates/MainLayout";
-import { DashboardPage } from "@/presentation/pages/DashboardPage";
 
 export default function Home() {
-    return (
-        <MainLayout>
-            <DashboardPage />
-        </MainLayout>
-    );
+    return <MainLayout />;
 }
