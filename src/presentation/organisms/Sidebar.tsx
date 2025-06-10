@@ -45,6 +45,7 @@ export const Sidebar = ({ isOpen,onClose, isDesktop }: SidebarProps) => {
                     <NavItem label="GPT" href="/products" />
                 </nav>
                 <nav className="flex text-sm flex-col space-y-2">
+                    <div className="pl-2 text-gray-500 dark:text-gray-400 ">Chats</div>
                     <NavItem label="More 1" href="/more1" />
                     <NavItem label="More 2" href="/more2" />
                     <NavItem label="More 3" href="/more3" />
