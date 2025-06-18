@@ -1,8 +1,17 @@
+type Part =
+    | { text: string }
+    | {
+    inlineData: {
+        mimeType: string;
+        data: string;
+    };
+};
+
 export const callGeminiApi = async (prompt: string, imageBase64?: string): Promise<string> => {
     const url =
         "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyCee3UrKWQsdhOnF_lWHvp9pUpWPZ7rFzc";
 
-    const parts: any[] = [{ text: prompt }];
+    const parts: Part[] = [{ text: prompt }];
 
     if (imageBase64) {
         parts.push({

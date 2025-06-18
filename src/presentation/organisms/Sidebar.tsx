@@ -2,7 +2,7 @@ import { NavItem } from "../atoms/NavItem";
 import Image from 'next/image'
 import { X } from "lucide-react";
 import { IconButton } from "../atoms/IconButton";
-// import Logo from "@/presentation/molecules/Logo";
+
 
 type SidebarProps = {
     isOpen: boolean;
