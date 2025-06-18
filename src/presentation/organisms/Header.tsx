@@ -1,7 +1,6 @@
 import { IconButton } from "../atoms/IconButton";
-import { Menu, X, UserCircle } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { DarkModeToggle } from "@/presentation/molecules/DarkModeToggle";
-// import {NavItem} from "@/presentation/atoms/NavItem"; // đường dẫn tùy theo bạn lưu
 import { UserDropdown }  from "../molecules/UserDropDown"
 
 type HeaderProps = {
@@ -11,14 +10,14 @@ type HeaderProps = {
 };
 
 export const Header = ({ isOpen, onToggleSidebar, isDesktop }: HeaderProps) => {
-    const sidebarWidth = 256; // 64 * 4 = 256px (w-64)
+    const sidebarWidth = 256;
 
     return (
         <header
             className={`
             bg-white dark:bg-black 
             fixed
-        top-0 header h-14 shadow-xs flex items-center px-4 z-40
+        top-0 header h-14 shadow-xs flex items-center px-4 z-30
         transition-all duration-300
         ${isDesktop ? "absolute" : "fixed left-0 right-0"}
       `}

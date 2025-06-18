@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { SlidersHorizontal } from "lucide-react";
+import Image from "next/image";
 
-export const ChatInput = ({ onSendMessage }: { onSendMessage: (msg: string) => void }) => {
+export const ChatInput = ({ onSendMessage }: { onSendMessage: (msg: string, imageBase64?: string) => void }) => {
     const [message, setMessage] = useState("");
     const [isComposing, setIsComposing] = useState(false);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const maxHeight = 150;
+    const [imageBase64, setImageBase64] = useState<string | null>(null);
 
     useEffect(() => {
         if (textareaRef.current) {
@@ -18,23 +20,36 @@ export const ChatInput = ({ onSendMessage }: { onSendMessage: (msg: string) => v
     }, [message]);
 
     const handleSend = () => {
-        if (!message.trim() || isComposing) return;
+        if ((!message.trim() && !imageBase64) || isComposing) return;
 
-        console.log("Sending:", message);
-        onSendMessage(message);
+        onSendMessage(message.trim(), imageBase64 ?? undefined);
         setMessage("");
+        setImageBase64(null);
+
         if (textareaRef.current) {
             textareaRef.current.style.height = "auto";
             textareaRef.current.style.overflowY = "hidden";
         }
     };
-
     const handleAddFile = () => {
-        console.log("Thêm file");
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "image/*";
+        input.onchange = async () => {
+            const file = input.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64 = reader.result?.toString().split(",")[1];
+                if (base64) setImageBase64(base64);
+            };
+            reader.readAsDataURL(file);
+        };
+        input.click();
     };
 
     return (
-        <div className="w-full max-w-3xl bg-white dark:bg-gray-900 shadow-sm rounded-4xl border px-4 py-3">
+        <div className="w-full max-w-3xl bg-white dark:bg-gray-900 shadow-sm rounded-4xl border px-4 py-3 ">
       <textarea
           ref={textareaRef}
           id="textarea"
@@ -56,6 +71,22 @@ export const ChatInput = ({ onSendMessage }: { onSendMessage: (msg: string) => v
           rows={1}
           style={{ maxHeight }}
       />
+            {imageBase64 && (
+                <div className="relative w-24 h-24 border rounded-2xl overflow-hidden">
+                    <Image
+                        src={`data:image/*;base64,${imageBase64}`}
+                        alt="preview"
+                        fill
+                        className="object-cover  w-full h-full"
+                    />
+                    <button
+                        onClick={() => setImageBase64(null)}
+                        className="absolute top-0 right-0 w-6  rounded-full bg-black bg-opacity-50 text-white m-1 p-1 text-xs"
+                    >
+                        ✕
+                    </button>
+                </div>
+            )}
 
             <div className="flex justify-between items-center mt-2">
                 <div className=" flex items-center gap-4">
@@ -93,7 +124,8 @@ export const ChatInput = ({ onSendMessage }: { onSendMessage: (msg: string) => v
                 <button
                     onClick={handleSend}
                     type="button"
-                    disabled={!message.trim()}
+                    disabled={!message.trim() && !imageBase64}
+
                     className="flex items-center justify-center bg-gray-900 text-white w-9 h-9 rounded-full shadow-md hover:bg-gray-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     <svg

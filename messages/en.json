@@ -13,7 +13,7 @@
     "password": "Password",
     "retype_password" : "Retype Password",
     "have_account" : "Alrealy have account? ",
-    "login": "SignIn",
+    "login": "Sign in",
     "signup_with_microsoft" : "SingUp with Microsoft"
   }
 }

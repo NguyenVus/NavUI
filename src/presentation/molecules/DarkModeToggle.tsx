@@ -13,7 +13,7 @@ export const DarkModeToggle = () => {
         setMounted(true);
     }, []);
 
-    // Ngăn render cho tới khi mounted để tránh mismatch
+
     if (!mounted) return null;
 
     const toggleTheme = () => {
