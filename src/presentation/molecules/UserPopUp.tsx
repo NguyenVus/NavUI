@@ -3,15 +3,16 @@ import React from "react";
 import { X } from "lucide-react";
 import { IconButton } from "@/presentation/atoms/IconButton";
 import Image from "next/image";
+import ReactDOM from "react-dom";
 
 interface UserPopupProps {
     onClose: () => void;
 }
 
 export const UserPopup = ({ onClose }: UserPopupProps) => {
-    return (
+    return ReactDOM.createPortal(
         <div
-            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center"
+            className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-center justify-center"
             onClick={onClose}
         >
             <div
@@ -105,6 +106,8 @@ export const UserPopup = ({ onClose }: UserPopupProps) => {
                     className="absolute top-4 right-4 text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white"
                 />
             </div>
-        </div>
+        </div>,
+    document.body
     );
+
 };
