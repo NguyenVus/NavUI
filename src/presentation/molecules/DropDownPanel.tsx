@@ -11,7 +11,7 @@ import {
     DownloadCloud,
     SlidersHorizontal,
 } from "lucide-react";
-import { UserPopup } from "../molecules/UserPopUp"; // đảm bảo import đúng
+import { UserPopup } from "../molecules/UserPopUp";
 
 interface DropdownPanelProps {
     email: string;
