@@ -13,14 +13,14 @@ export const UserPopup = ({ onClose }: UserPopupProps) => {
     return ReactDOM.createPortal(
         <div
             className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-center justify-center"
-            onClick={onClose}
+            onMouseDown={onClose}
         >
             <div
-                className="relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-[95%] max-w-4xl h-[80%] overflow-y-auto flex flex-col md:flex-row"
-                onClick={(e) => e.stopPropagation()}
+                className="relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-[95%] max-w-4xl h-[55%] overflow-y-auto flex flex-col md:flex-row"
+                onMouseDown={(e) => e.stopPropagation()}
             >
 
-                <div className="w-full md:w-1/4 border-b md:border-r pr-4 mb-4 md:mb-0 text-sm text-gray-700 dark:text-gray-300">
+                <div className="w-full md:w-1/4  md:border-r pr-4 mb-4 md:mb-0 text-sm text-gray-700 dark:text-gray-300">
                     <div className="cursor-pointer rounded-sm p-2 hover:bg-gray-200 dark:hover:bg-gray-700">
                         User Info
                     </div>
@@ -48,8 +48,8 @@ export const UserPopup = ({ onClose }: UserPopupProps) => {
                                 <Image
                                     src="/assets/logos/img.png"
                                     alt="Avatar"
-                                    width={64}
-                                    height={64}
+                                    width={56}
+                                    height={56}
                                     className="rounded-full border border-white"
                                 />
                             </div>
@@ -64,7 +64,7 @@ export const UserPopup = ({ onClose }: UserPopupProps) => {
                             </div>
                             <div>
                                 <strong>Language:</strong>{" "}
-                                <select className="border rounded px-2 py-1 dark:bg-gray-700 dark:text-white">
+                                <select className="border rounded px-2  dark:bg-gray-700 dark:text-white">
                                     <option>English</option>
                                     <option>Tiếng Việt</option>
                                 </select>
@@ -94,6 +94,10 @@ export const UserPopup = ({ onClose }: UserPopupProps) => {
                                 <div>
                                     <strong>Số lượng prompt đã tạo:</strong> 12
                                 </div>
+                                <div>
+                                    <strong>Năm:</strong> 2025
+                                </div>
+
                             </div>
                         </div>
                     </div>
