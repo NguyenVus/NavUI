@@ -21,8 +21,6 @@ export const MainLayout = () => {
     const [chatHistory, setChatHistory] = useState<{ id: string; messages: Message[] }[]>([]);
     const [currentChatId, setCurrentChatId] = useState<string | null>(null);
 
-
-    // 🧠 Setup layout + khởi tạo chat ID
     useEffect(() => {
         const onResize = () => {
             if (window.innerWidth < 768) {
