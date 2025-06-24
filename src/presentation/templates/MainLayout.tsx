@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, } from "react";
+import React, { useState, useEffect } from "react";
 import { Header } from "../organisms/Header";
 import { Sidebar } from "../organisms/Sidebar";
 import { ChatInput } from "../atoms/ChatInput";
@@ -8,7 +8,7 @@ import { DashboardPage } from "../pages/DashboardPage";
 import { sendMessageToGemini } from "@/domain/usecases/chat/sendMessagetoGemini";
 
 type Message = {
-    sender: 'user' | 'bot';
+    sender: "user" | "bot";
     text?: string;
     imageBase64?: string;
 };
@@ -18,18 +18,15 @@ export const MainLayout = () => {
     const [isDesktop, setIsDesktop] = useState(true);
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [loadingChatId, setLoadingChatId] = useState<string | null>(null);
     const [chatHistory, setChatHistory] = useState<{ id: string; messages: Message[] }[]>([]);
     const [currentChatId, setCurrentChatId] = useState<string | null>(null);
 
     useEffect(() => {
         const onResize = () => {
-            if (window.innerWidth < 768) {
-                setIsDesktop(false);
-                setIsOpen(false);
-            } else {
-                setIsDesktop(true);
-                setIsOpen(true);
-            }
+            const isWide = window.innerWidth >= 768;
+            setIsDesktop(isWide);
+            setIsOpen(isWide);
         };
 
         const storedHistory = localStorage.getItem("chatHistory");
@@ -42,24 +39,21 @@ export const MainLayout = () => {
             }
         }
 
-
-        setCurrentChatId(prev => prev ?? crypto.randomUUID());
+        setCurrentChatId((prev) => prev ?? crypto.randomUUID());
 
         onResize();
         window.addEventListener("resize", onResize);
         return () => window.removeEventListener("resize", onResize);
     }, []);
 
-
     useEffect(() => {
         localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
     }, [chatHistory]);
 
-
     useEffect(() => {
         if (!currentChatId) return;
-        setChatHistory(prev => {
-            const index = prev.findIndex(chat => chat.id === currentChatId);
+        setChatHistory((prev) => {
+            const index = prev.findIndex((chat) => chat.id === currentChatId);
             if (index !== -1) {
                 const updated = [...prev];
                 updated[index] = { id: currentChatId, messages };
@@ -70,15 +64,11 @@ export const MainLayout = () => {
     }, [messages, currentChatId]);
 
     const getCurrentMessages = () => {
-        return chatHistory.find(chat => chat.id === currentChatId)?.messages || [];
+        return chatHistory.find((chat) => chat.id === currentChatId)?.messages || [];
     };
-
 
     const handleSendMessage = async (text: string, imageBase64?: string) => {
         if (isLoading) return;
-
-        setIsLoading(true);
-
 
         let activeChatId = currentChatId;
         if (!activeChatId) {
@@ -86,110 +76,54 @@ export const MainLayout = () => {
             setCurrentChatId(activeChatId);
         }
 
+        setIsLoading(true);
+        setLoadingChatId(activeChatId);
+
         if (imageBase64) {
             const imageMessage: Message = { sender: "user", imageBase64 };
-            setChatHistory(prev => {
-                const updated = [...prev];
-                const index = updated.findIndex(chat => chat.id === activeChatId);
-                if (index !== -1) {
-                    updated[index] = {
-                        ...updated[index],
-                        messages: [...updated[index].messages, imageMessage],
-                    };
-                } else {
-                    updated.push({ id: activeChatId, messages: [imageMessage] });
-                }
-                return updated;
-            });
+            updateChat(activeChatId, imageMessage);
         }
-
 
         if (text.trim()) {
             const textMessage: Message = { sender: "user", text };
-            setChatHistory(prev => {
-                const updated = [...prev];
-                const index = updated.findIndex(chat => chat.id === activeChatId);
-                if (index !== -1) {
-                    updated[index] = {
-                        ...updated[index],
-                        messages: [...updated[index].messages, textMessage],
-                    };
-                } else {
-                    updated.push({ id: activeChatId, messages: [textMessage] });
-                }
-                return updated;
-            });
+            updateChat(activeChatId, textMessage);
         }
 
         try {
-
             const replyText = await sendMessageToGemini(text, imageBase64);
             const botMessage: Message = { sender: "bot", text: replyText };
-
-
-            setChatHistory(prev => {
-                const updated = [...prev];
-                const index = updated.findIndex(chat => chat.id === activeChatId);
-                if (index !== -1) {
-                    updated[index] = {
-                        ...updated[index],
-                        messages: [...updated[index].messages, botMessage],
-                    };
-                }
-                return updated;
-            });
+            updateChat(activeChatId, botMessage);
         } catch (error) {
             console.error("Lỗi gọi Gemini:", error);
-            const errorMsg: Message = {
-                sender: "bot",
-                text: "⚠️ Lỗi hệ thống, thử lại sau.",
-            };
-
-            setChatHistory(prev => {
-                const updated = [...prev];
-                const index = updated.findIndex(chat => chat.id === activeChatId);
-                if (index !== -1) {
-                    updated[index] = {
-                        ...updated[index],
-                        messages: [...updated[index].messages, errorMsg],
-                    };
-                }
-                return updated;
-            });
+            const errorMsg: Message = { sender: "bot", text: "⚠️ Lỗi hệ thống, thử lại sau." };
+            updateChat(activeChatId, errorMsg);
         } finally {
             setIsLoading(false);
+            setLoadingChatId(null);
         }
     };
 
-    // const handleSendMessage = async (text: string, imageBase64?: string) => {
-    //     if (isLoading) return;
-    //
-    //
-    //     setIsLoading(true);
-    //
-    //     try {
-    //         if (imageBase64) {
-    //             setMessages(prev => [...prev, { sender: 'user', imageBase64 }]);
-    //         }
-    //
-    //         if (text.trim()) {
-    //             setMessages(prev => [...prev, { sender: 'user', text }]);
-    //         }
-    //
-    //         const replyText = await sendMessageToGemini(text, imageBase64);
-    //         setMessages(prev => [...prev, { sender: 'bot', text: replyText }]);
-    //     } catch (error) {
-    //         console.error("Lỗi gọi Gemini:", error);
-    //         setMessages(prev => [...prev, { sender: 'bot', text: "⚠️ Hệ thống đang quá tải, vui lòng thử lại sau." }]);
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // };
+    const updateChat = (chatId: string, newMessage: Message) => {
+        setChatHistory((prev) => {
+            const updated = [...prev];
+            const index = updated.findIndex((chat) => chat.id === chatId);
+            if (index !== -1) {
+                updated[index] = {
+                    ...updated[index],
+                    messages: [...updated[index].messages, newMessage],
+                };
+            } else {
+                updated.push({ id: chatId, messages: [newMessage] });
+            }
+            return updated;
+        });
+    };
+
 
     const handleNewChat = () => {
         if (messages.length > 0 && currentChatId) {
-            setChatHistory(prev => {
-                const existingIndex = prev.findIndex(chat => chat.id === currentChatId);
+            setChatHistory((prev) => {
+                const existingIndex = prev.findIndex((chat) => chat.id === currentChatId);
                 if (existingIndex !== -1) {
                     const updated = [...prev];
                     updated[existingIndex] = { id: currentChatId, messages };
@@ -205,7 +139,7 @@ export const MainLayout = () => {
     };
 
     const handleSelectChat = (id: string) => {
-        const selectedChat = chatHistory.find(chat => chat.id === id);
+        const selectedChat = chatHistory.find((chat) => chat.id === id);
         if (selectedChat) {
             setCurrentChatId(id);
             setMessages(selectedChat.messages);
@@ -216,7 +150,7 @@ export const MainLayout = () => {
 
     return (
         <div className="h-screen flex flex-col">
-            <Header isOpen={isOpen} onToggleSidebar={() => setIsOpen(prev => !prev)} isDesktop={isDesktop} />
+            <Header isOpen={isOpen} onToggleSidebar={() => setIsOpen((prev) => !prev)} isDesktop={isDesktop} />
             <div className="flex min-h-screen pt-14">
                 <Sidebar
                     isOpen={isOpen}
@@ -228,12 +162,15 @@ export const MainLayout = () => {
                 />
                 <div
                     className="flex-1 flex flex-col transition-all duration-300"
-                    style={{
-                        marginLeft: isDesktop ? (isOpen ? sidebarWidth : 0) : 0,
-                    }}
+                    style={{ marginLeft: isDesktop ? (isOpen ? sidebarWidth : 0) : 0 }}
                 >
                     <main className="flex-1 overflow-y-auto p-6 pb-48">
-                        <DashboardPage messages={getCurrentMessages()} isLoading={isLoading} />
+                        <DashboardPage
+                            messages={getCurrentMessages()}
+                            isLoading={isLoading}
+                            chatId={currentChatId}
+                            loadingChatId={loadingChatId}
+                        />
                     </main>
                 </div>
             </div>

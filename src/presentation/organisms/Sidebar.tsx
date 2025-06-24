@@ -1,7 +1,8 @@
 import { NavItem } from "../atoms/NavItem";
 import Image from 'next/image'
-import { X } from "lucide-react";
+import { X, MoreHorizontal } from "lucide-react";
 import { IconButton } from "../atoms/IconButton";
+
 
 type Message = {
     sender: 'user' | 'bot';
@@ -18,6 +19,7 @@ type SidebarProps = {
 };
 
 export const Sidebar = ({ isOpen,onClose, isDesktop, onNewChat, chatHistory, onSelectChat }: SidebarProps) => {
+
     return (
         <aside
             className={`
@@ -65,6 +67,7 @@ export const Sidebar = ({ isOpen,onClose, isDesktop, onNewChat, chatHistory, onS
                                     key={chat.id}
                                     label={previewText}
                                     onClick={() => onSelectChat(chat.id)}
+                                    rightIcon={<MoreHorizontal size={18} />}
                                 />
                             );
                         })}

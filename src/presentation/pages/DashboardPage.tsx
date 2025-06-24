@@ -2,12 +2,22 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 
 type Message = {
-    sender: 'user' | 'bot';
+    sender: "user" | "bot";
     text?: string;
     imageBase64?: string;
 };
 
-export const DashboardPage = ({ messages, isLoading, }: { messages: Message[], isLoading: boolean }) => {
+export const DashboardPage = ({
+                                  messages,
+                                  isLoading,
+                                  chatId,
+                                  loadingChatId,
+                              }: {
+    messages: Message[];
+    isLoading: boolean;
+    chatId: string | null;
+    loadingChatId: string | null;
+}) => {
     const bottomRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -23,7 +33,7 @@ export const DashboardPage = ({ messages, isLoading, }: { messages: Message[], i
             ) : (
                 <div className="space-y-2">
                     {messages.map((msg, idx) => {
-                        const isUser = msg.sender === 'user';
+                        const isUser = msg.sender === "user";
                         return (
                             <div
                                 key={idx}
@@ -50,13 +60,15 @@ export const DashboardPage = ({ messages, isLoading, }: { messages: Message[], i
                             </div>
                         );
                     })}
-                    {isLoading && (
-                    <div className="w-full flex justify-start">
-                        <div className="py-2.5 px-5 rounded-3xl bg-blue-100 dark:bg-blue-900 text-black dark:text-white max-w-[80%]">
-                            Đang phản hồi...
+
+                    {isLoading && chatId === loadingChatId && (
+                        <div className="w-full flex justify-start">
+                            <div className="py-2.5 px-5 rounded-3xl bg-blue-100 dark:bg-blue-900 text-black dark:text-white max-w-[80%]">
+                                Đang phản hồi...
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
+
                     <div ref={bottomRef} />
                 </div>
             )}
