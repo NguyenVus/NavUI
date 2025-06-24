@@ -122,11 +122,11 @@ export const MainLayout = () => {
         }
 
         try {
-            // 4. Gọi Gemini API với cả text và image
+
             const replyText = await sendMessageToGemini(text, imageBase64);
             const botMessage: Message = { sender: "bot", text: replyText };
 
-            // 5. Cập nhật lại chatHistory với bot message
+
             setChatHistory(prev => {
                 const updated = [...prev];
                 const index = updated.findIndex(chat => chat.id === activeChatId);
