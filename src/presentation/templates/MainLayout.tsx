@@ -81,14 +81,13 @@ export const MainLayout = () => {
 
         setIsLoading(true);
 
-        // 1. Đảm bảo có chat ID hiện tại
+
         let activeChatId = currentChatId;
         if (!activeChatId) {
             activeChatId = crypto.randomUUID();
             setCurrentChatId(activeChatId);
         }
 
-        // 2. Cập nhật chatHistory với message ảnh (nếu có)
         if (imageBase64) {
             const imageMessage: Message = { sender: "user", imageBase64 };
             setChatHistory(prev => {
@@ -106,7 +105,7 @@ export const MainLayout = () => {
             });
         }
 
-        // 3. Cập nhật chatHistory với message text (nếu có)
+
         if (text.trim()) {
             const textMessage: Message = { sender: "user", text };
             setChatHistory(prev => {
