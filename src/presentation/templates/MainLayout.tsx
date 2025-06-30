@@ -14,8 +14,8 @@ type Message = {
 };
 
 export const MainLayout = () => {
-    const [isOpen, setIsOpen] = useState(true);
-    const [isDesktop, setIsDesktop] = useState(true);
+    const [isDesktop, setIsDesktop] = useState<boolean | null>(null);
+    const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [loadingChatId, setLoadingChatId] = useState<string | null>(null);
@@ -54,9 +54,11 @@ export const MainLayout = () => {
         if (!currentChatId) return;
         setChatHistory((prev) => {
             const index = prev.findIndex((chat) => chat.id === currentChatId);
+
             if (index !== -1) {
                 const updated = [...prev];
-                updated[index] = { id: currentChatId, messages };
+                const existingChat = updated[index];
+                updated[index] = {...existingChat, id: currentChatId, messages };
                 return updated;
             }
             return [...prev, { id: currentChatId, messages }];
@@ -119,14 +121,18 @@ export const MainLayout = () => {
         });
     };
 
-
+    const handleDeleteChat = (chatId: string) => {
+        const newHistory = chatHistory.filter(chat => chat.id !== chatId);
+        setChatHistory(newHistory);
+    };
     const handleNewChat = () => {
         if (messages.length > 0 && currentChatId) {
             setChatHistory((prev) => {
                 const existingIndex = prev.findIndex((chat) => chat.id === currentChatId);
                 if (existingIndex !== -1) {
                     const updated = [...prev];
-                    updated[existingIndex] = { id: currentChatId, messages };
+                    const existingChat = updated[existingIndex];
+                    updated[existingIndex] = { ...existingChat,id: currentChatId, messages };
                     return updated;
                 }
                 return [...prev, { id: currentChatId, messages }];
@@ -137,6 +143,16 @@ export const MainLayout = () => {
         setCurrentChatId(newId);
         setMessages([]);
     };
+    const handleRenameChat = (chatId: string, newName: string) => {
+        setChatHistory(prev =>
+            prev.map(chat =>
+                chat.id === chatId
+                    ? { ...chat, customName: newName }
+                    : chat
+            )
+        );
+    };
+
 
     const handleSelectChat = (id: string) => {
         const selectedChat = chatHistory.find((chat) => chat.id === id);
@@ -147,6 +163,8 @@ export const MainLayout = () => {
     };
 
     const sidebarWidth = 256;
+
+    if (isDesktop === null) return null;
 
     return (
         <div className="h-screen flex flex-col">
@@ -159,6 +177,9 @@ export const MainLayout = () => {
                     onNewChat={handleNewChat}
                     onSelectChat={handleSelectChat}
                     chatHistory={chatHistory}
+                    onDeleteChat={handleDeleteChat}
+                    onRenameChat={handleRenameChat}
+                    currentChatId={currentChatId}
                 />
                 <div
                     className="flex-1 flex flex-col transition-all duration-300"

@@ -8,14 +8,19 @@ type NavItemProps = {
     onClick?: () => void;
     onIconClick?: () => void;
     rightIcon?: React.ReactNode;
+    isActive?: boolean;
 };
 
-export const NavItem = ({ label, href, onClick,onIconClick,rightIcon }: NavItemProps) => {
+export const NavItem = ({ label, href, onClick,onIconClick,rightIcon, isActive }: NavItemProps) => {
+    const baseClass = "relative flex items-center justify-between px-2 py-2 rounded cursor-pointer group";
+    const activeClass = isActive
+        ? "bg-gray-200 dark:hover:bg-gray-700 font-semibold"
+        : "hover:bg-gray-200 dark:hover:bg-gray-700";
     if (onClick) {
         return (
             <div
                 onClick={onClick}
-                className="relative flex items-center justify-between px-2 py-2 rounded cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 group"
+                className={`${baseClass} ${activeClass}`}
             >
 
                 <span className="truncate">{label}</span>
@@ -26,7 +31,7 @@ export const NavItem = ({ label, href, onClick,onIconClick,rightIcon }: NavItemP
                             e.stopPropagation();
                             onIconClick?.();
                         }}
-                        className="opacity-0 group-hover:opacity-100 ml-2  rounded hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
+                        className="opacity-0 group-hover:opacity-100 ml-2  rounded   cursor-pointer"
                     >
                         {rightIcon}
                     </div>

@@ -2,31 +2,104 @@ import { NavItem } from "../atoms/NavItem";
 import Image from 'next/image'
 import { X, MoreHorizontal } from "lucide-react";
 import { IconButton } from "../atoms/IconButton";
-
+import {ChatMenuDropdown} from "../molecules/ChatHistotyDropDown"
+import {useState, useEffect,useRef } from "react";
 
 type Message = {
     sender: 'user' | 'bot';
     text?: string;
     imageBase64?: string;
 };
+type ChatHistoryItem = {
+    id: string;
+    messages: Message[];
+    customName?: string;
+};
 type SidebarProps = {
     isOpen: boolean;
     onClose: () => void;
     isDesktop: boolean;
     onNewChat: () => void;
-    chatHistory: {id: string; messages: Message[]} [];
+    chatHistory: ChatHistoryItem[];
     onSelectChat: (id: string) => void;
+    onRenameChat: (id: string, newName: string) => void;
+    onDeleteChat: (id: string) => void;
+    currentChatId: string | null;
 };
 
-export const Sidebar = ({ isOpen,onClose, isDesktop, onNewChat, chatHistory, onSelectChat }: SidebarProps) => {
+export const Sidebar = ({ isOpen,onClose, isDesktop, onNewChat, chatHistory, onSelectChat,onDeleteChat, onRenameChat, currentChatId }: SidebarProps) => {
+    const [dropdownOpenId, setDropdownOpenId] = useState<string | null>(null);
+    const dropdownRef = useRef<HTMLDivElement | null>(null);
+    const sidebarRef = useRef<HTMLDivElement | null>(null);
+    const [editingChatId, setEditingChatId] = useState<string | null>(null);
+    const [newName, setNewName] = useState<string>("");
 
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                !isDesktop && isOpen &&
+                sidebarRef.current &&
+                !sidebarRef.current.contains(event.target as Node)
+            ) {
+                onClose();
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [isOpen, isDesktop, onClose]);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node)
+            ) {
+                setDropdownOpenId(null);
+            }
+        };
+
+        if (dropdownOpenId !== null) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [dropdownOpenId]);
+
+    const handleToggleDropdown = (chatId: string) => {
+        setDropdownOpenId(prev => (prev === chatId ? null : chatId));
+    };
+
+    const handleDeleteChat = (chatId: string) => {
+        onDeleteChat(chatId);
+        setDropdownOpenId(null);
+    };
+
+    const handleRenameChat = (chatId: string, currentName: string = "") => {
+        setEditingChatId(chatId);
+        setNewName(currentName || "");
+        setDropdownOpenId(null);
+    };
+
+
+    const handleArchiveChat = (chatId: string) => {
+        console.log("📦 Archive chat:", chatId);
+        setDropdownOpenId(null);
+    };
+
+    const handleShareChat = (chatId: string) => {
+        console.log("🔗 Share chat:", chatId);
+        setDropdownOpenId(null);
+    };
     return (
         <aside
+            ref={sidebarRef}
             className={`
                 bg-gray-50 dark:bg-gray-900 shadow-md w-64
                 flex flex-col
-            
-                ${isDesktop ? "fixed top-0 left-0 h-screen" : "fixed inset-0 h-full z-40"}
+  
+                ${isDesktop ? "fixed top-0 left-0 h-screen" : "fixed inset-0 h-full z-30"}
                 transition-transform duration-300 ease-in-out
                 ${isOpen ? "translate-x-0" : "-translate-x-full"}
             `}
@@ -60,15 +133,51 @@ export const Sidebar = ({ isOpen,onClose, isDesktop, onNewChat, chatHistory, onS
                         .filter(chat => chat.messages.some(msg => msg.sender === "user" && msg.text)) // chỉ hiển thị nếu có nội dung
                         .map(chat => {
                             const firstUserMessage = chat.messages.find(msg => msg.sender === "user" && msg.text);
-                            const previewText = firstUserMessage?.text?.slice(0, 30) || "Chat mới";
+                            const previewText = chat.customName || firstUserMessage?.text?.slice(0, 30) || "Chat mới";
 
                             return (
-                                <NavItem
-                                    key={chat.id}
-                                    label={previewText}
-                                    onClick={() => onSelectChat(chat.id)}
-                                    rightIcon={<MoreHorizontal size={18} />}
-                                />
+                                <div key={chat.id} className="relative">
+                                    {editingChatId === chat.id ? (
+                                        <input
+                                            className="w-full p-2 text-sm bg-gray-200 dark:hover:bg-gray-700 rounded border focus:outline-none"
+                                            value={newName}
+                                            onChange={(e) => setNewName(e.target.value)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === "Enter") {
+                                                    onRenameChat(chat.id, newName.trim());
+                                                    setEditingChatId(null);
+                                                }
+                                            }}
+                                            onBlur={() => {
+                                                if (newName.trim() !== "") {
+                                                    onRenameChat(chat.id, newName.trim());
+                                                }
+                                                setEditingChatId(null);
+                                            }}
+                                            autoFocus
+                                        />
+                                    ) : (
+                                        <NavItem
+                                            label={previewText}
+                                            onClick={() => onSelectChat(chat.id)}
+                                            onIconClick={() => handleToggleDropdown(chat.id)}
+                                            rightIcon={<MoreHorizontal size={18} />}
+                                            isActive={chat.id === currentChatId}
+                                        />
+                                    )}
+
+                                    {dropdownOpenId === chat.id && (
+                                        <div ref={dropdownRef}>
+                                            <ChatMenuDropdown
+                                                onDelete={() => handleDeleteChat(chat.id)}
+                                                onArchive={() => handleArchiveChat(chat.id)}
+                                                onShare={() => handleShareChat(chat.id)}
+                                                onRenameChat={() => handleRenameChat(chat.id, chat.customName || "")} // 👈 truyền customName
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+
                             );
                         })}
                 </nav>

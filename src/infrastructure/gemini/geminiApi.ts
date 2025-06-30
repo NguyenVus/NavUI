@@ -8,8 +8,9 @@ type Part =
 };
 
 export const callGeminiApi = async (prompt: string, imageBase64?: string): Promise<string> => {
+    const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
     const url =
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyCee3UrKWQsdhOnF_lWHvp9pUpWPZ7rFzc";
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
     const parts: Part[] = [{ text: prompt }];
 
