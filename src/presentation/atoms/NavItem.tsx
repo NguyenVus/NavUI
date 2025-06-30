@@ -9,18 +9,20 @@ type NavItemProps = {
     onIconClick?: () => void;
     rightIcon?: React.ReactNode;
     isActive?: boolean;
+    isDropdownOpen?: boolean;
 };
 
-export const NavItem = ({ label, href, onClick,onIconClick,rightIcon, isActive }: NavItemProps) => {
+export const NavItem = ({ label, href, onClick,onIconClick,rightIcon, isActive, isDropdownOpen }: NavItemProps) => {
     const baseClass = "relative flex items-center justify-between px-2 py-2 rounded cursor-pointer group";
     const activeClass = isActive
-        ? "bg-gray-200 dark:hover:bg-gray-700 font-semibold"
+        ? "bg-gray-200 dark:bg-gray-600 bg- dark:hover:bg-gray-700 font-semibold"
         : "hover:bg-gray-200 dark:hover:bg-gray-700";
+    const dropdownClass = isDropdownOpen ? "bg-gray-100 dark:bg-gray-800" : "";
     if (onClick) {
         return (
             <div
                 onClick={onClick}
-                className={`${baseClass} ${activeClass}`}
+                className={`${baseClass} ${activeClass} ${dropdownClass}`}
             >
 
                 <span className="truncate">{label}</span>
@@ -31,7 +33,9 @@ export const NavItem = ({ label, href, onClick,onIconClick,rightIcon, isActive }
                             e.stopPropagation();
                             onIconClick?.();
                         }}
-                        className="opacity-0 group-hover:opacity-100 ml-2  rounded   cursor-pointer"
+                        className={`ml-2 rounded cursor-pointer ${
+                            isDropdownOpen ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                        }`}
                     >
                         {rightIcon}
                     </div>

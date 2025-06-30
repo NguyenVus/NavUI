@@ -29,6 +29,7 @@ type SidebarProps = {
 
 export const Sidebar = ({ isOpen,onClose, isDesktop, onNewChat, chatHistory, onSelectChat,onDeleteChat, onRenameChat, currentChatId }: SidebarProps) => {
     const [dropdownOpenId, setDropdownOpenId] = useState<string | null>(null);
+    const [dropdownPosition, setDropdownPosition] = useState<'top' | 'bottom'>('bottom');
     const dropdownRef = useRef<HTMLDivElement | null>(null);
     const sidebarRef = useRef<HTMLDivElement | null>(null);
     const [editingChatId, setEditingChatId] = useState<string | null>(null);
@@ -68,6 +69,18 @@ export const Sidebar = ({ isOpen,onClose, isDesktop, onNewChat, chatHistory, onS
     }, [dropdownOpenId]);
 
     const handleToggleDropdown = (chatId: string) => {
+        const element = document.getElementById(`dropdown-anchor-${chatId}`);
+        if (element) {
+            const rect = element.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+
+            if (windowHeight - rect.bottom < 200) {
+                setDropdownPosition('top');
+            } else {
+                setDropdownPosition('bottom');
+            }
+        }
+
         setDropdownOpenId(prev => (prev === chatId ? null : chatId));
     };
 
@@ -136,10 +149,10 @@ export const Sidebar = ({ isOpen,onClose, isDesktop, onNewChat, chatHistory, onS
                             const previewText = chat.customName || firstUserMessage?.text?.slice(0, 30) || "Chat mới";
 
                             return (
-                                <div key={chat.id} className="relative">
+                                <div key={chat.id} className="relative" id={`dropdown-anchor-${chat.id}`}>
                                     {editingChatId === chat.id ? (
                                         <input
-                                            className="w-full p-2 text-sm bg-gray-200 dark:hover:bg-gray-700 rounded border focus:outline-none"
+                                            className="w-full p-2 text-sm bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded border focus:outline-none"
                                             value={newName}
                                             onChange={(e) => setNewName(e.target.value)}
                                             onKeyDown={(e) => {
@@ -163,11 +176,19 @@ export const Sidebar = ({ isOpen,onClose, isDesktop, onNewChat, chatHistory, onS
                                             onIconClick={() => handleToggleDropdown(chat.id)}
                                             rightIcon={<MoreHorizontal size={18} />}
                                             isActive={chat.id === currentChatId}
+                                            isDropdownOpen={dropdownOpenId === chat.id}
                                         />
                                     )}
 
                                     {dropdownOpenId === chat.id && (
-                                        <div ref={dropdownRef}>
+                                        <div
+                                            ref={dropdownRef}
+                                            className={`absolute right-0 z-40 ${
+                                                dropdownPosition === 'top'
+                                                    ? 'bottom-full mb-40'
+                                                    : 'top-full mt-2'
+                                            }`}
+                                        >
                                             <ChatMenuDropdown
                                                 onDelete={() => handleDeleteChat(chat.id)}
                                                 onArchive={() => handleArchiveChat(chat.id)}
